@@ -1,15 +1,5 @@
 import torch.nn as nn
-import torch.utils.model_zoo as model_zoo
-# from IPython import embed
-from collections import OrderedDict
-
-# from utee import misc
-# print = misc.logger.info
-
-model_urls = {
-    'cifar10': 'http://ml.cs.tsinghua.edu.cn/~chenxi/pytorch-models/cifar10-d875770b.pth',
-    'cifar100': 'http://ml.cs.tsinghua.edu.cn/~chenxi/pytorch-models/cifar100-3a55a987.pth',
-}
+import torch
 
 class CIFAR(nn.Module):
     def __init__(self, features, n_channel, num_classes):
@@ -50,10 +40,9 @@ def cifar10(n_channel, pretrained=None):
     layers = make_layers(cfg, batch_norm=True)
     model = CIFAR(layers, n_channel=8*n_channel, num_classes=10)
     if pretrained is not None:
-        m = model_zoo.load_url(model_urls['cifar10'])
-        state_dict = m.state_dict() if isinstance(m, nn.Module) else m
-        assert isinstance(state_dict, (dict, OrderedDict)), type(state_dict)
-        model.load_state_dict(state_dict)
+        pthfile = r'/home/xzt/.cache/torch/checkpoints/cifar10-d875770b.pth'
+
+        model.load_state_dict(torch.load(pthfile,map_location = torch.device('cpu')))
     return model
 
 def cifar100(n_channel, pretrained=None):
@@ -61,13 +50,7 @@ def cifar100(n_channel, pretrained=None):
     layers = make_layers(cfg, batch_norm=True)
     model = CIFAR(layers, n_channel=8*n_channel, num_classes=100)
     if pretrained is not None:
-        m = model_zoo.load_url(model_urls['cifar100'])
-        state_dict = m.state_dict() if isinstance(m, nn.Module) else m
-        assert isinstance(state_dict, (dict, OrderedDict)), type(state_dict)
-        model.load_state_dict(state_dict)
+        pthfile = r'/home/xzt/.cache/torch/checkpoints/cifar100-3a55a987.pth'
+        model.load_state_dict(torch.load(pthfile,map_location = torch.device('cpu')))
     return model
-
-if __name__ == '__main__':
-    model = cifar100(128, pretrained=True)
-    # embed()
 
